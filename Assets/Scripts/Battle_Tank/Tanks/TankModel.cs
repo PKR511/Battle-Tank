@@ -1,0 +1,40 @@
+﻿
+namespace Battle_Tank.Tanks
+{
+	public class TankModel
+	{
+
+		//private Variables
+		private float speed, health, damage;
+		private bool active, spwaned;
+		//Property
+		public  float Speed { get { return speed; } set { speed = value; } }
+
+		public  float Health { get { return health; } set { health = value; } }
+
+		public  float Damage { get { return damage; } set { damage = value; } }
+
+		public  bool Active { get { return active; } set { active = value; } }
+
+		public  bool Spwaned { get { return spwaned; } set { spwaned = value; } }
+
+		//Default Constructor
+		public TankModel ()
+		{
+			
+		}//TankModel
+
+		//Para Constructor
+		public TankModel (float speed, float health, float damage)
+		{
+
+			this.speed = speed;
+			this.health = health;
+			this.damage = damage;
+			this.active = false;
+			this.spwaned = false;
+		}//TankModel
+
+	}
+//Class
+}//namespace
