@@ -21,7 +21,7 @@ public class TankController  {
 
 		//Param Constructor
 		public TankController(TankModel tankModel,TankView tankView,GameObject parent,Vector3 pos){
-			this.tankModel = TankModel;
+			this.tankModel = tankModel;
 
 			this.tankView = GameObject.Instantiate<TankView>(tankView);
 			this.tankView.transform.SetParent (parent.transform);

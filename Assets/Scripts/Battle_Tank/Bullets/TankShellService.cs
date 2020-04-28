@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Battle_Tank.Bullets;
-using Battle_Tank.Bullets;
-using Battle_Tank.Bullets;
+﻿using UnityEngine;
+using Battle_Tank.FX;
+using Battle_Tank.Tanks.Enemy;
+using Battle_Tank.Helper;
 
 namespace Battle_Tank.Bullets{
 	public class TankShellService: GenericSingleton<TankShellService> {
@@ -22,18 +20,63 @@ namespace Battle_Tank.Bullets{
 			Debug.Log("Shell Service");
 		}//Awake
 
-
+		/// <summary>
+		/// Tank Shell Service Method To Fire Bullet
+		/// </summary>
+		/// <param name="pos">Position.</param>
+		/// <param name="rot">Rotation.</param>
 		public void fireBullet(Vector3 pos,Quaternion rot){
 
-			TankShellModel shellModel = new TankShellModel(5f);
+			TankShellModel shellModel = new TankShellModel(5f,10f);
 			TankShellController shell = new TankShellController (shellModel, shellView,parent,pos,rot);
 
 		}//fireBullet
 
 
-	
+		/// <summary>
+		/// Shells the collision effect.
+		/// </summary>
+		/// <param name="pos">Position.</param>
+		/// <param name="rot">Rot.</param>
+		public void ShellCollisionEffect(Vector3 pos, Quaternion rot){
+			FxService.Instance.ShellCollisionEffect (pos, rot);
+			Debug.Log (this + ":ShellCollisionEffect");
+		}//ShellCollisionEffect
+
+        public void DealDamage(float amount, GameObject obj, string tag)
+        {
+            float tankHealth = GetTankHealth(obj, tag);
+
+            SetTankHealth(tankHealth-amount, obj, tag);
+
+           
+           
+
+        }    
+
+        public float GetTankHealth(GameObject obj, string tag)
+        {
+            float tankHealth = 0f;
+            if (tag == MyTags.ENEMY_TAG)
+            {
+                 tankHealth = EnemyTankService.Instance.GetTankHealth(obj.GetComponent<EnemyTankView>());
+
+            }
+            return tankHealth;
+           
+        }
 
 
+        public void SetTankHealth(float amount, GameObject obj, string tag)
+        {
+           
+            if (tag == MyTags.ENEMY_TAG)
+            {
+                EnemyTankService.Instance.SetHealth(obj.GetComponent<EnemyTankView>(), amount);
 
-}//Class
+            }
+            
+
+        }
+    }//Class
 }//Namespace

@@ -662,7 +662,7 @@ GameObject:
   - component: {fileID: 4640372217643320}
   m_Layer: 0
   m_Name: OilField
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
@@ -729,7 +729,7 @@ GameObject:
   - component: {fileID: 4400793842168200}
   m_Layer: 0
   m_Name: Military
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
@@ -1502,7 +1502,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4366463266053016}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CompleteLevelArt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9275,7 +9275,7 @@ Animator:
   m_GameObject: {fileID: 1302923403570534}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d7962f90116a5c94d9a7a2b2e4fbc1b2, type: 3}
-  m_Controller: {fileID: 9100000, guid: 92ebf232461ebc342884766124202572, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -9326,7 +9326,7 @@ Animator:
   m_GameObject: {fileID: 1532122012128470}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d7962f90116a5c94d9a7a2b2e4fbc1b2, type: 3}
-  m_Controller: {fileID: 9100000, guid: 92ebf232461ebc342884766124202572, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -9360,7 +9360,7 @@ Animator:
   m_GameObject: {fileID: 1940802016102404}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d7962f90116a5c94d9a7a2b2e4fbc1b2, type: 3}
-  m_Controller: {fileID: 9100000, guid: 92ebf232461ebc342884766124202572, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

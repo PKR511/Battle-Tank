@@ -92,8 +92,9 @@ namespace Battle_Tank.Tanks
 				{
 					Vector3 pos = this.gameObject.transform.GetChild (0).GetChild (3).GetChild (0).transform.position;
 
-					tankController.RequestToFireBullet (pos,this.gameObject.transform.rotation);
-
+					if (tankController != null)
+						tankController.RequestToFireBullet (pos, this.gameObject.transform.rotation);
+					
 
 				}
 				Debug.Log ("Key F Pressed ");
@@ -110,7 +111,7 @@ namespace Battle_Tank.Tanks
 		public void Move ()
 		{			
 			if (moveVertical != 0f) {
-				myBody.MovePosition (transform.position + transform.forward * (moveVertical *0.1f));
+				myBody.MovePosition (transform.position + transform.forward * (moveVertical *tankController.TankModel.Speed));
 
 			}
 
