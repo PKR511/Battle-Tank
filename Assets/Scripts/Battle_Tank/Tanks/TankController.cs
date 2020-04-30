@@ -21,7 +21,7 @@ public class TankController  {
 
 		//Param Constructor
 		public TankController(TankModel tankModel,TankView tankView,GameObject parent,Vector3 pos){
-			this.tankModel = TankModel;
+			this.tankModel = tankModel;
 
 			this.tankView = GameObject.Instantiate<TankView>(tankView);
 			this.tankView.transform.SetParent (parent.transform);
@@ -39,5 +39,33 @@ public class TankController  {
 		}//requestToFireBullets
 
 
-}//Class
+
+
+        public void SetHealth(float health)
+        {
+            this.TankModel.Health = health;
+            if (this.TankModel.Health == 0)
+            {
+
+                tankView.TankDeadEffect();
+                Debug.Log(":Killed");
+                this.Destroy();
+            }
+            // Debug.Log("Tank Health:" + this.TankModel.Health);
+        }
+        public void Destroy()
+        {
+            this.tankModel = null;
+            //this.TankView.DestroyAll();
+            this.tankView = null;
+
+
+        }//Destroy
+
+        public void TankDestroyVFX(Vector3 pos, Quaternion rot)
+        {
+            TankService.Instance.TankDestroyVFX(pos, rot);
+        }
+
+    }//Class
 }//namespace

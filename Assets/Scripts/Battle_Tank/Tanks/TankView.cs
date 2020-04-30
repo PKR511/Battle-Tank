@@ -17,13 +17,15 @@ namespace Battle_Tank.Tanks
 		private float rotY = 0f;
 		private float moveHorizontal, moveVertical;
 		private TankController tankController;
+        [SerializeField]
+        private float tankDestroyDuration = 1f;
 
-		//Method Defination
+        //Method Defination
 
-		/// <summary>
-		/// Awake is called first when game object is invoked and is been used for initialization.
-		/// </summary>
-		void Awake ()
+        /// <summary>
+        /// Awake is called first when game object is invoked and is been used for initialization.
+        /// </summary>
+        void Awake ()
 		{
 			rotY = transform.localRotation.eulerAngles.y;
 			moveVertical = 0;
@@ -92,8 +94,9 @@ namespace Battle_Tank.Tanks
 				{
 					Vector3 pos = this.gameObject.transform.GetChild (0).GetChild (3).GetChild (0).transform.position;
 
-					tankController.RequestToFireBullet (pos,this.gameObject.transform.rotation);
-
+					if (tankController != null)
+						tankController.RequestToFireBullet (pos, this.gameObject.transform.rotation);
+					
 
 				}
 				Debug.Log ("Key F Pressed ");
@@ -110,7 +113,7 @@ namespace Battle_Tank.Tanks
 		public void Move ()
 		{			
 			if (moveVertical != 0f) {
-				myBody.MovePosition (transform.position + transform.forward * (moveVertical *0.1f));
+				myBody.MovePosition (transform.position + transform.forward * (moveVertical *tankController.TankModel.Speed));
 
 			}
 
@@ -137,10 +140,35 @@ namespace Battle_Tank.Tanks
 		{
 			this.tankController = tankController;
 		}
-		//Initialize
-			
+        //Initialize
+        /// <summary>
+        /// Returns The Linked Controller
+        /// </summary>
+        /// <returns></returns>
+        public TankController GetController()
+        {
+            return this.tankController;
+        }//GetController
 
-	}
-	//Class
+        public void TankDeadEffect()
+        {
+            Coroutine c = StartCoroutine(TankDestroy(tankDestroyDuration));
+            
+         
+        }//TankDeadEffect
+
+        public IEnumerator TankDestroy(float time)
+        {
+            Time.timeScale = 0;
+
+            yield return new WaitForSecondsRealtime(time);
+            Time.timeScale = 1;
+            tankController.TankDestroyVFX(this.gameObject.transform.position, this.gameObject.transform.rotation);
+            this.gameObject.SetActive(false);
+
+        }
+
+    }
+    //Class
 }
 //namespace

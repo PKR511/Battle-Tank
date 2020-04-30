@@ -1,40 +1,37 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using Battle_Tank.Bullets;
 using Battle_Tank.FX;
 using Battle_Tank.Helper.ScriptableObjects;
 using Battle_Tank.Helper;
 
-namespace Battle_Tank.Tanks
+namespace Battle_Tank.Tanks.Enemy
 {
-	public class TankService : GenericSingleton<TankService>
+	public class EnemyTankService : GenericSingleton<EnemyTankService>
 	{
 		//private Variables
 		
 		[SerializeField]
 		private GameObject parent;
         [SerializeField]
-        private TankScriptableObjectList tankList;
+        private EnemyTankScriptableObjectList tankList;
         [SerializeField]
-        private Helper.Camera.CameraFollow cameraFollow;
-        private float moveHorizontal, moveVertical;
-        private bool playerSpwaned;
+        private SpwanPositionPropertyList posList;
 
-		// Use this for initialization
-		protected override	void Awake ()
+
+        // Use this for initialization
+        protected override	void Awake ()
 		{
 			base.Awake ();
-            //Do your Thing
-            playerSpwaned = false;
-			Debug.Log ("Tank Service");
+			//Do your Thing
+
+			Debug.Log ("Enemy Tank Service");
 		}//Awake
 	
 
 		protected void Update ()
 		{
-            if (!playerSpwaned)
-            {
-                CheckInput();
-            }
+			CheckInput ();
 		}//update
 
 		/// <summary>
@@ -43,17 +40,17 @@ namespace Battle_Tank.Tanks
 		private void CheckInput ()
 		{
 			//If Block to spwan tank Start
-			if (Input.GetKeyDown (KeyCode.Alpha1)) {
+			if (Input.GetKeyDown (KeyCode.Alpha0)) {
                 int index = Random.Range(0, tankList.tank.Length);
-                TankScriptableObject tankObject = tankList.tank[0];
-                TankModel tankModel = new TankModel(tankObject);
-				Vector3 pos = new Vector3 (1, 0, 0);
-				TankController tank = new TankController (tankModel, tankList.tank[0].tankView, parent, pos);
-                cameraFollow.enabled = true;
-                playerSpwaned = true;
+                int index2 = Random.Range(0, posList.pos.Length);
+                EnemyTankScriptableObject tankObject = tankList.tank[index];
+                EnemyTankModel tankModel = new EnemyTankModel(tankObject);
+               
+                EnemyTankController tank = new EnemyTankController(tankModel,tankList.tank[index].tankView , parent, posList.pos[index2].SpwanPos);
 
-                Debug.Log ("Key 1 Pressed" + tankList.tank[0].Name);
-			}//if
+                Debug.Log("Key 1 Pressed" + tankList.tank[index].Name);
+
+            }//if
 			
 			//If Block to spwan tank Ends
 
@@ -69,21 +66,21 @@ namespace Battle_Tank.Tanks
 			//Calling Fx Service To Instantiate Fire Shell VFX
 			FxService.Instance.fireBulletFX(pos,rot);
 			//Calling TankShell Service To Instantiate Shell
-			TankShellService.Instance.fireBullet (pos,rot,MyTags.PLAYER_TAG);
+			TankShellService.Instance.fireBullet (pos,rot,MyTags.ENEMY_TAG);
 
 		}//FireBullet
 
 
-        public float GetTankHealth(TankView obj)
+        public float GetTankHealth(EnemyTankView obj)
         {
             return obj.GetController().TankModel.Health;
         }
 
-        public void SetHealth(TankView obj, float health)
+        public void SetHealth(EnemyTankView obj,float health)
         {
             Debug.Log("Health==" + health);
             obj.GetController().SetHealth(health);
-
+            
         }
 
 
@@ -91,6 +88,9 @@ namespace Battle_Tank.Tanks
         {
             FxService.Instance.TankExplosionEffect(pos, rot);
         }
+
+
+
 
     }//Class
 }//namespace

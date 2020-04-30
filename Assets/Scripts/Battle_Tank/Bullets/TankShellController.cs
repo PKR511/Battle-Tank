@@ -1,5 +1,6 @@
 ﻿using Battle_Tank.Bullets;
 using Battle_Tank.Bullets;
+using Battle_Tank.Helper;
 using UnityEngine;
 
 namespace Battle_Tank.Bullets{
@@ -26,10 +27,24 @@ public class TankShellController  {
 
 		}//TankController
 
+		/// <summary>
+		/// Shells the collision effect.
+		/// </summary>
+		/// <param name="pos">Position.</param>
+		/// <param name="rot">Rot.</param>
+		public void ShellCollisionEffect(Vector3 pos, Quaternion rot){
+			TankShellService.Instance. ShellCollisionEffect (pos, rot);
 
+		}//ShellCollisionEffect
 
+        public void DealDamage(float amount, GameObject obj,string tag)
 
+        {
+          
+                TankShellService.Instance.DealDamage(amount, obj, tag);
 
+            
+        }
 
 }//Class
 }//namespace
