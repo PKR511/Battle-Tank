@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using Battle_Tank.Helper;
+using Helper.Interface.IDamageable;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +11,7 @@ namespace Battle_Tank.Tanks
 	/// Tank view.
 	///	For Applying Any Visual Changes To Game Object 
 	/// </summary>
-	public class TankView : MonoBehaviour
+	public class TankView : MonoBehaviour,IDamageable
 	{
 
 		//private Variable
@@ -17,13 +20,15 @@ namespace Battle_Tank.Tanks
 		private float rotY = 0f;
 		private float moveHorizontal, moveVertical;
 		private TankController tankController;
+        [SerializeField]
+        private float tankDestroyDuration = 1f;
+        private Coroutine c;
+        //Method Defination
 
-		//Method Defination
-
-		/// <summary>
-		/// Awake is called first when game object is invoked and is been used for initialization.
-		/// </summary>
-		void Awake ()
+        /// <summary>
+        /// Awake is called first when game object is invoked and is been used for initialization.
+        /// </summary>
+        void Awake ()
 		{
 			rotY = transform.localRotation.eulerAngles.y;
 			moveVertical = 0;
@@ -92,8 +97,9 @@ namespace Battle_Tank.Tanks
 				{
 					Vector3 pos = this.gameObject.transform.GetChild (0).GetChild (3).GetChild (0).transform.position;
 
-					tankController.RequestToFireBullet (pos,this.gameObject.transform.rotation);
-
+					if (tankController != null)
+						tankController.RequestToFireBullet (pos, this.gameObject.transform.rotation);
+					
 
 				}
 				Debug.Log ("Key F Pressed ");
@@ -101,16 +107,17 @@ namespace Battle_Tank.Tanks
 			//If Block For Tank Bullet Fire Ends
 
 
-		}
-		//CheckInput
+		}   
 
-		/// <summary>
-		/// Method Used to Move  Object in forward direction.
-		/// </summary>
-		public void Move ()
+        //CheckInput
+
+        /// <summary>
+        /// Method Used to Move  Object in forward direction.
+        /// </summary>
+        public void Move ()
 		{			
 			if (moveVertical != 0f) {
-				myBody.MovePosition (transform.position + transform.forward * (moveVertical *0.1f));
+				myBody.MovePosition (transform.position + transform.forward * (moveVertical *tankController.TankModel.Speed));
 
 			}
 
@@ -137,10 +144,51 @@ namespace Battle_Tank.Tanks
 		{
 			this.tankController = tankController;
 		}
-		//Initialize
-			
+        //Initialize
+        /// <summary>
+        /// Returns The Linked Controller
+        /// </summary>
+        /// <returns></returns>
+        public TankController GetController()
+        {
+            return this.tankController;
+        }//GetController
 
-	}
-	//Class
+        public void TankDeadEffect()
+        {
+             c = StartCoroutine(TankDestroy(tankDestroyDuration));
+            
+         
+        }//TankDeadEffect
+
+        public IEnumerator TankDestroy(float time)
+        {
+            Time.timeScale = 0;
+
+            yield return new WaitForSecondsRealtime(time);
+            Time.timeScale = 1;
+            tankController.TankDestroyVFX(this.gameObject.transform.position, this.gameObject.transform.rotation);
+            this.gameObject.SetActive(false);
+
+        }
+
+
+        internal void DestroyAll()
+        {
+            StopAllCoroutines();
+            Destroy(this);
+
+            
+        }
+
+
+        void IDamageable.TakeDamage(float damageAmount, string damageBy)
+        {
+            if (damageBy != MyTags.PLAYER_TAG)
+                this.tankController.ApplyDamage(damageAmount);
+        }
+
+    }
+    //Class
 }
 //namespace

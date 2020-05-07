@@ -1,73 +1,105 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Battle_Tank.Tanks;
-using Battle_Tank.Tanks;
-using Battle_Tank.Tanks;
+﻿using UnityEngine;
 using Battle_Tank.Bullets;
+using Battle_Tank.FX;
+using Battle_Tank.Helper.ScriptableObjects;
+using Battle_Tank.Helper;
+using Battle_Tank.Tanks.Enemy;
 
 namespace Battle_Tank.Tanks
 {
 	public class TankService : GenericSingleton<TankService>
 	{
 		//private Variables
-		[SerializeField]
-		private TankView[] tankView;
+		
 		[SerializeField]
 		private GameObject parent;
+        [SerializeField]
+        private TankScriptableObjectList tankList;
+        [SerializeField]
+        private Helper.Camera.CameraFollow cameraFollow;
+        private float moveHorizontal, moveVertical;
+        private bool playerSpwaned,playerDead;
 
+        public bool PlayerDead
+        {
+            get
+            {
+                return playerDead;
+            }
 
-		private float moveHorizontal, moveVertical;
+            set
+            {
+                playerDead = value;
+            }
+        }
 
-		// Use this for initialization
-		protected override	void Awake ()
+        // Use this for initialization
+        protected override	void Awake ()
 		{
 			base.Awake ();
-			//Do your Thing
-
+            //Do your Thing
+            playerSpwaned = false;
 			Debug.Log ("Tank Service");
 		}//Awake
 	
 
 		protected void Update ()
 		{
-			CheckInput ();
+            if (!playerSpwaned)
+            {
+                CheckInput();
+            }
+            if(playerSpwaned && playerDead)
+            {
+                cameraFollow.enabled = false;
+                // DestroyAllGameObjects.Instance.DestroyAll();
+                //EnemyTankService.Instance.StopShooting();
+            }
 		}//update
 
-
+		/// <summary>
+		/// Tanks Service Method To CHeck Input To Spwan Tank
+		/// </summary>
 		private void CheckInput ()
 		{
 			//If Block to spwan tank Start
 			if (Input.GetKeyDown (KeyCode.Alpha1)) {
-				TankModel tankModl = new TankModel (5f, 100f, 0.1f);
-				Vector3 pos = new Vector3 (1, 1, 0);
-				TankController tank = new TankController (tankModl, tankView [0], parent, pos);
+                int index = Random.Range(0, tankList.tank.Length);
+                TankScriptableObject tankObject = tankList.tank[0];
+                TankModel tankModel = new TankModel(tankObject);
+				Vector3 pos = new Vector3 (1, 0, 0);
+				TankController tank = new TankController (tankModel, tankList.tank[0].tankView, parent, pos);
+                cameraFollow.enabled = true;
+                playerSpwaned = true;
 
-				Debug.Log ("Key 1 Pressed" + tankView [0].gameObject.name);
+                Debug.Log ("Key 1 Pressed" + tankList.tank[0].Name);
 			}//if
-			if (Input.GetKeyDown (KeyCode.Alpha2)) {
-				TankModel tankModl = new TankModel (5f, 100f, 0.2f);
-				Vector3 pos = new Vector3 (6, 1, 0);
-				TankController tank = new TankController (tankModl, tankView [1], parent, pos);
-
-				Debug.Log ("Key 2 Pressed" + tankView [1].gameObject.name);
-			}//if
-			if (Input.GetKeyDown (KeyCode.Alpha3)) {
-				TankModel tankModl = new TankModel (5f, 100f, 0.5f);
-				Vector3 pos = new Vector3 (-6, 1, 0);
-
-				TankController tank = new TankController (tankModl, tankView [2], parent, pos);
-
-				Debug.Log ("Key 3 Pressed" + tankView [2].gameObject.name);
-			}//if
+			
 			//If Block to spwan tank Ends
 
 
 		}//CheckInput
 
+		/// <summary>
+		/// Tank Service Method To Fire Bullet
+		/// </summary>
+		/// <param name="pos">Position.</param>
+		/// <param name="rot">Rotation.</param>
 		public void FireBullet(Vector3 pos,Quaternion rot){
-			TankShellService.Instance.fireBullet (pos,rot);
-		}
+			//Calling Fx Service To Instantiate Fire Shell VFX
+			FxService.Instance.fireBulletFX(pos,rot);
+			//Calling TankShell Service To Instantiate Shell
+			TankShellService.Instance.fireBullet (pos,rot,MyTags.PLAYER_TAG);
 
-	}//Class
+		}//FireBullet
+
+
+     
+
+        public void TankDestroyVFX(Vector3 pos, Quaternion rot)
+        {
+            FxService.Instance.TankExplosionEffect(pos, rot);
+        }
+
+    }//Class
 }//namespace
