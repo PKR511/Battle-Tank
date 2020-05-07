@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using Battle_Tank.Tanks;
+
 using Battle_Tank.Tanks.Enemy;
 
 namespace Battle_Tank.Helper.ScriptableObjects

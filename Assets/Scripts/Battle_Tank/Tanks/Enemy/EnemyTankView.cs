@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Helper.Interface.IDamageable;
+using UnityEngine.AI;
+using Battle_Tank.Tanks.AI;
 
 namespace Battle_Tank.Tanks.Enemy
 {
@@ -16,12 +18,17 @@ namespace Battle_Tank.Tanks.Enemy
 
         //private Variable
         private Rigidbody myBody;
-        private Coroutine coroutine;
-        [SerializeField]
-        private float attackDuration = 0.0f;
         private EnemyTankController tankController;
-        private Vector3 BulletSpwanPos;
-        
+       
+        private AIStateType currentStateType = AIStateType.Idle;
+        private AIState currentState;
+        protected Dictionary<AIStateType, AIState> _states = new Dictionary<AIStateType, AIState>();
+        private Collider t;
+        //public 
+        public AITargetType targetType = AITargetType.None;
+        public Vector3 targetPos;
+        public float attackDistance = 0;
+        public float attackDuration = 0;
         //Method Defination
 
         /// <summary>
@@ -29,15 +36,81 @@ namespace Battle_Tank.Tanks.Enemy
         /// </summary>
         void Awake()
         {
-           
+            Debug.Log("Tank View Awake");
 
             myBody = gameObject.GetComponent<Rigidbody>();
-            Debug.Log("Tank View");
+           
+          
+          
+            // Fetch all states on this game object
+            AIState[] states = GetComponents<AIState>();
+
+            // Loop through all states and add them to the state dictionary
+            foreach (AIState state in states)
+            {
+                if (state != null && !_states.ContainsKey(state.GetStateType()))
+                {
+                    // Add this state to the state dictionary
+                    _states[state.GetStateType()] = state;
+
+                   
+                }
+            }
+
+            // Set the current state
+            if (_states.ContainsKey(currentStateType))
+            {
+                currentState = _states[currentStateType];
+                currentState.OnEnterState();
+            }
+            else
+            {
+                currentState = null;
+            }
+
+           
         }
         //Awake
 
 
+        protected virtual void Update()
+        {
+            if (t != null)
+            {
+                if(t.gameObject.active==false)
+                {
+                    targetType = AITargetType.None;
+                }
+            }
+            SetStates();
+            Debug.Log("Current State=" + currentState);
+        }
 
+        public void SetStates()
+        {
+            if (currentState == null) return;
+
+            AIStateType newStateType = currentState.OnUpdate();
+            if (newStateType != currentStateType)
+            {
+                AIState newState = null;
+                if (_states.TryGetValue(newStateType, out newState))
+                {
+                    currentState.OnExitState();
+                    newState.OnEnterState();
+                    currentState = newState;
+                }
+                else
+                if (_states.TryGetValue(AIStateType.Idle, out newState))
+                {
+                    currentState.OnExitState();
+                    newState.OnEnterState();
+                    currentState = newState;
+                }
+
+                currentStateType = newStateType;
+            }
+        }
         /// <summary>
         /// Initialize the specified tankController.
         /// </summary>
@@ -57,31 +130,49 @@ namespace Battle_Tank.Tanks.Enemy
             return this.tankController;
         }//GetController
 
-        /// <summary>
-        /// Invoked OnTrigger Event to Detect Collision
-        /// </summary>
-        /// <param name="target"></param>
+
+
         public void OnTriggerEnter(Collider target)
         {
-            if (target.tag == MyTags.PLAYER_TAG  )
+            if (target.tag == MyTags.PLAYER_TAG)
             {
-               
-                RotateEnemyToward(target.gameObject.transform.position);
-                coroutine = StartCoroutine(Attack(attackDuration));
+                targetPos = target.gameObject.transform.position;
+                RotateEnemyToward(targetPos);
+                targetType = AITargetType.Player;
+                t = target;
+                Debug.Log("iisngoishgoisgoisgosgoshgoishgoisghsoighsoghsoi");
+                //coroutine = StartCoroutine(Attack(attackDuration));
             }
 
-            }//OnTriggerEnter
+        }//OnTriggerEnter
+
+        public void OnTriggerStay(Collider target)
+        {
+            if (target.tag == MyTags.PLAYER_TAG)
+            {
+                
+                    targetPos = target.gameObject.transform.position;
+                    RotateEnemyToward(targetPos);
+                    targetType = AITargetType.Player;
+              
+            }
+
+
+        }//OnTriggerEnter
+
+
+
 
         public void OnTriggerExit(Collider target)
         {
             if (target.tag == MyTags.PLAYER_TAG)
             {
-                RotateEnemyToward(target.gameObject.transform.position);
-                StopCoroutine(coroutine);
+               
+                targetType = AITargetType.Waypoint;
+               
             }
 
         }//OnTriggerEnter
-
 
         private void RotateEnemyToward(Vector3 pos)
         {
@@ -91,59 +182,26 @@ namespace Battle_Tank.Tanks.Enemy
             transform.rotation = Quaternion.Slerp(transform.rotation, rot, 1);
         }//RotateEnemyToward
 
-
-       public IEnumerator Attack(float time)
-        {
-            while (true)
-            {
-               
-                yield return new WaitForSeconds(time);
-                BulletSpwanPos = this.gameObject.transform.GetChild(0).GetChild(3).GetChild(0).transform.position;
-                this.tankController.FireBullet(BulletSpwanPos, this.gameObject.transform.rotation);
-            }
-            
-        }
-
-
-        public void TankDeadEffect()
-        {
-            tankController.TankDestroyVFX(this.gameObject.transform.position, this.gameObject.transform.rotation);
-            this.gameObject.SetActive(false);
-            //Coroutine c = StartCoroutine(TankDead(1f));
-        }
-        public void DestroyAll()
-        {
-
-
-            // StopAllCoroutines();
-
-
-
-            Debug.Log(gameObject + ":Killed");
-
-
-        }
-        //FixedUpdate
-
-
-        public IEnumerator TankDead(float time)
-        {
-            yield return new WaitForSeconds(time);
-            gameObject.SetActive(false);
-
-        }
-
-
-        public void StopShooting()
-        {
-            StopCoroutine(coroutine);
-        }
-
+      
+             
         void IDamageable.TakeDamage(float damageAmount, string damageBy)
         {
             if(damageBy!=MyTags.ENEMY_TAG)
             this.tankController.ApplyDamage(damageAmount);
         }
+
+
+        public void DestroyAll()
+        {
+            targetType = AITargetType.None;
+            // StopAllCoroutines();
+            Destroy(this);
+
+            Debug.Log(gameObject + ":Killed");
+
+
+        }
+
     } //Class
 }
 //namespace

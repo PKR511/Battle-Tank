@@ -53,7 +53,7 @@ namespace Battle_Tank.Tanks
             {
                 cameraFollow.enabled = false;
                 // DestroyAllGameObjects.Instance.DestroyAll();
-                //EnemyTankService.Instance.StopShooting();
+             
             }
 		}//update
 

@@ -71,30 +71,13 @@ namespace Battle_Tank.Tanks.Enemy
 		}//FireBullet
 
 
-        public float GetTankHealth(EnemyTankView obj)
-        {
-            return obj.GetController().TankModel.Health;
-        }
-
-        public void SetHealth(EnemyTankView obj,float health)
-        {
-            Debug.Log("Health==" + health);
-            obj.GetController().SetHealth(health);
-            
-        }
-
-
+    
         public void TankDestroyVFX(Vector3 pos, Quaternion rot)
         {
             FxService.Instance.TankExplosionEffect(pos, rot);
         }
 
-        public void StopShooting()
-        {
-            EnemyTankController tc = new EnemyTankController();
-            tc.TankView.StopShooting();
-        }
-
+      
 
     }//Class
 }//namespace
