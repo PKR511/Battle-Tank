@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Battle_Tank.Events;
+using System;
 using UnityEngine;
 
 namespace Battle_Tank.Tanks.Enemy{
@@ -59,6 +60,7 @@ public class EnemyTankController  {
             tankModel.Health -= damageAmount;
             if (tankModel.Health <= 0)
             {
+                EventService.Instance.InvokePlayerKillEvent();
                 //tankView.TankDeadEffect();
                 Debug.Log(":Killed");
                 //this.Destroy();
