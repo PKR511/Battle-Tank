@@ -4,6 +4,7 @@ using Battle_Tank.FX;
 using Battle_Tank.Helper.ScriptableObjects;
 using Battle_Tank.Helper;
 using Battle_Tank.Tanks.Enemy;
+using Battle_Tank.Events;
 
 namespace Battle_Tank.Tanks
 {
@@ -90,8 +91,9 @@ namespace Battle_Tank.Tanks
 			FxService.Instance.fireBulletFX(pos,rot);
 			//Calling TankShell Service To Instantiate Shell
 			TankShellService.Instance.fireBullet (pos,rot,MyTags.PLAYER_TAG);
+            
 
-		}//FireBullet
+        }//FireBullet
 
 
      

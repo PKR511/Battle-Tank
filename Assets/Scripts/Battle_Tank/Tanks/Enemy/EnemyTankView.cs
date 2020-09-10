@@ -83,7 +83,7 @@ namespace Battle_Tank.Tanks.Enemy
                 }
             }
             SetStates();
-            Debug.Log("Current State=" + currentState);
+           // Debug.Log("Current State=" + currentState);
         }
 
         public void SetStates()
