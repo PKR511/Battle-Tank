@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using Battle_Tank.Tanks.Enemy;
 
 namespace Battle_Tank.Tanks.AI
 {
 
     public enum AIStateType { None, Idle,  Patrol, Attack,  Pursuit, Dead }
-    public enum AITargetType { None, Waypoint, Visual_Player }
+    public enum AITargetType { None, Waypoint, Player }
 
     // ----------------------------------------------------------------------
     // Class	:	AIState
@@ -14,15 +14,21 @@ namespace Battle_Tank.Tanks.AI
     // ----------------------------------------------------------------------
     public abstract class AIState : MonoBehaviour
     {
-        private TankView tankView;
+        protected EnemyTankView tankView;
+       // protected AITargetType targetType = AITargetType.None;
         private void Awake()
         {
-            tankView = GetComponent<TankView>();
+            tankView = GetComponent<EnemyTankView>();
         }
 
         // Default Handlers
-        public virtual void OnEnterState() { }
-        public virtual void OnExitState() { }
+        public virtual void OnEnterState() {
+            this.enabled = true;
+        }
+        public virtual void OnExitState() {
+            this.enabled = false;
+
+        }
 
 
 

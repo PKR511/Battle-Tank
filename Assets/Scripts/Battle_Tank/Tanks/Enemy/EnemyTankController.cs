@@ -31,18 +31,7 @@ public class EnemyTankController  {
 		}//TankController
 
 
-		public void SetHealth(float health)
-        {
-            this.TankModel.Health = health;
-            if (this.TankModel.Health == 0)
-            {
-
-                tankView.TankDeadEffect();
-                Debug.Log( ":Killed");
-               this. Destroy();
-            }
-           // Debug.Log("Tank Health:" + this.TankModel.Health);
-        }
+		
 
         public void Destroy()
         {
@@ -70,9 +59,9 @@ public class EnemyTankController  {
             tankModel.Health -= damageAmount;
             if (tankModel.Health <= 0)
             {
-                tankView.TankDeadEffect();
+                //tankView.TankDeadEffect();
                 Debug.Log(":Killed");
-                this.Destroy();
+                //this.Destroy();
             }
            
                 

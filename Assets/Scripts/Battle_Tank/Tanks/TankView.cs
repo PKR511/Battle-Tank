@@ -176,7 +176,7 @@ namespace Battle_Tank.Tanks
         internal void DestroyAll()
         {
             StopAllCoroutines();
-            Destroy(this);
+            //Destroy(this);
 
             
         }
